@@ -13,10 +13,13 @@ public struct GitWorker {
         }
 
         let branches: [String] = result.output.map {
-            guard $0.hasPrefix("* ") else {
-                return $0
+            let branch = $0.trimmingCharacters(in: .whitespaces)
+            guard branch.hasPrefix("*") else {
+                return branch
             }
-            let coloredString = $0.deletingPrefix("* ").addingTerminalColor(.green)
+            let coloredString: String = String(branch.dropFirst(1))
+                .trimmingCharacters(in: .whitespaces)
+                .addingTerminalColor(.green)
             return coloredString
         }
 
@@ -29,8 +32,6 @@ public struct GitWorker {
         }
 
         try Shell.execute("git checkout \(branches[selectedIndex])")
-
-        print(selectedIndex)
     }
 
     private func buildList(itemKind: ItemKind, items: [String]) -> String {
