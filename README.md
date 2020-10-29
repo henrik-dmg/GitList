@@ -15,7 +15,7 @@ $ mint install henrik-dmg/GitList
 
 ## Usage
 GitList is designed to work as a git subcommand. It will be available as `git list`
-Checking out a branch: `git list -c`
-Deleting a branch: `git list -d` (or `git list -d -f` to force delete)
+- Checking out a branch: `git list -c`
+- Deleting a branch: `git list -d` (or `git list -d -f` to force delete)
 
 For help, you can also call `git-list --help`
