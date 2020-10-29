@@ -5,41 +5,30 @@ public struct GitWorker {
 
     public init() {}
 
-    public func listBranches(checkoutAfterSelection: Bool) throws {
-        let result = try Shell.execute("git branch")
+	public func listBranches(action: GitAction) throws {
+		let result = try Shell.execute("git branch", errorHandle: .standardError)
 
         guard !result.output.isEmpty else {
             throw NSError(description: "Empty branch list")
         }
 
-        let branches: [String] = result.output.map {
-            let branch = $0.trimmingCharacters(in: .whitespaces)
-            guard branch.hasPrefix("*") else {
-                return branch
-            }
-            let coloredString: String = String(branch.dropFirst(1))
-                .trimmingCharacters(in: .whitespaces)
-                .addingTerminalColor(.green)
-            return coloredString
+        let branches: [Branch] = result.output.map {
+			Branch(name: $0)
         }
 
-        let listString = buildList(itemKind: .branch, items: branches)
-        print(listString)
+		let commands = branches.map { branch in
+			ConsoleMenuCommand(title: branch.coloredName) {
+				switch action {
+				case .checkout:
+					try Shell.execute("git checkout \(branch.name)", expectedReturnCode: 0, outputHandle: .standardOutput)
+				case .delete:
+					try Shell.execute("git branch -d \(branch.name)", expectedReturnCode: 0, outputHandle: .standardOutput)
+				}
+			}
+		}
 
-        var selectedIndex = ShellReader.readInt(prompt: "Please choose a branch by entering a number:") - 1
-        while !branches.indices.contains(selectedIndex) {
-            selectedIndex = ShellReader.readInt(prompt: "Please choose a branch by entering a number:") - 1
-        }
-
-        try Shell.execute("git checkout \(branches[selectedIndex])")
-    }
-
-    private func buildList(itemKind: ItemKind, items: [String]) -> String {
-        var constructedString = ""
-        let branches = items.enumerated().map { "\($0.offset + 1): \($0.element)" }
-        constructedString += branches.joined(separator: "\n")
-
-        return constructedString
+		let menu = ConsoleMenu(title: "Available branches", commands: commands)
+		try menu.present()
     }
 
 }
@@ -52,6 +41,25 @@ extension String {
         }
         return String(self.dropFirst(prefix.count))
     }
+
+}
+
+struct Branch {
+	let name: String
+	let isCurrent: Bool
+
+	var coloredName: String {
+		isCurrent ? name.addingTerminalColor(.green) : name
+	}
+
+	init(name: String) {
+		isCurrent = name.hasPrefix("*")
+		if name.hasPrefix("*") {
+			self.name = String(name.dropFirst()).trimmingCharacters(in: .whitespaces)
+		} else {
+			self.name = String(name.dropFirst()).trimmingCharacters(in: .whitespaces)
+		}
+	}
 
 }
 

@@ -1,9 +1,9 @@
 import Foundation
 import CLIFoundation
 
-public enum GitAction {
+public enum GitAction: String, CaseIterable {
 
-    case checkout(_ branch: String)
-    case delete(_ branch: String)
+    case checkout
+	case delete
 
 }
