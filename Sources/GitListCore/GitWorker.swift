@@ -5,7 +5,7 @@ public struct GitWorker {
 
     public init() {}
 
-	public func listBranches(action: GitAction) throws {
+	public func listBranches(action: GitAction, force: Bool) throws {
 		let result = try Shell.execute("git branch", errorHandle: .standardError)
 
         guard !result.output.isEmpty else {
@@ -22,7 +22,8 @@ public struct GitWorker {
 				case .checkout:
 					try Shell.execute("git checkout \(branch.name)", expectedReturnCode: 0, outputHandle: .standardOutput)
 				case .delete:
-					try Shell.execute("git branch -d \(branch.name)", expectedReturnCode: 0, outputHandle: .standardOutput)
+					let command = force ? "git branch -D \(branch.name)" : "git branch -d \(branch.name)"
+					try Shell.execute(command, expectedReturnCode: 0, outputHandle: .standardOutput)
 				}
 			}
 		}
