@@ -5,7 +5,7 @@ public struct GitWorker {
 
     public init() {}
 
-	public func listBranches(action: GitAction, force: Bool) throws {
+	public func listBranches(action: GitAction?, force: Bool) throws {
 		let result = try Shell.execute("git branch", errorHandle: .standardError)
 
         guard !result.output.isEmpty else {
@@ -14,10 +14,16 @@ public struct GitWorker {
 
         let branches: [Branch] = result.output.map {
 			Branch(name: $0)
+        }.sorted {
+            $0.name < $1.name
         }
 
 		let commands = branches.map { branch in
 			ConsoleMenuCommand(title: branch.coloredName) {
+				guard let action = action else {
+					return
+				}
+
 				switch action {
 				case .checkout:
 					try Shell.execute("git checkout \(branch.name)", expectedReturnCode: 0, outputHandle: .standardOutput)
@@ -46,6 +52,7 @@ extension String {
 }
 
 struct Branch {
+
 	let name: String
 	let isCurrent: Bool
 

@@ -1,25 +1,23 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "CLIFoundation",
-        "repositoryURL": "https://github.com/henrik-dmg/CLIFoundation",
-        "state": {
-          "branch": "master",
-          "revision": "271a27ac5f336b6ee6f23b8aea5ba1909595d3e5",
-          "version": null
-        }
-      },
-      {
-        "package": "swift-argument-parser",
-        "repositoryURL": "https://github.com/apple/swift-argument-parser",
-        "state": {
-          "branch": null,
-          "revision": "92646c0cdbaca076c8d3d0207891785b3379cbff",
-          "version": "0.3.1"
-        }
+  "pins" : [
+    {
+      "identity" : "clifoundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/henrik-dmg/CLIFoundation",
+      "state" : {
+        "branch" : "master",
+        "revision" : "1c96e38918d5a38c506158d42d3a5d12cfb5f908"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "fddd1c00396eed152c45a46bea9f47b98e59301d",
+        "version" : "1.2.0"
+      }
+    }
+  ],
+  "version" : 2
 }
